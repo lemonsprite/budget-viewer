@@ -32,8 +32,14 @@ const arc = d3
   .outerRadius(chartSet.radius)
   .innerRadius(chartSet.radius / 2);
 
-//   Update Func
+// Scale Warna
+const color = d3.scaleOrdinal(d3["schemeSet3"]);
+
+// Update Func
 const update = (params) => {
+  // Update Scale Warna
+  color.domain(data.map((e) => e.nama));
+
   // Integrasi data ke chart
   const p = g.selectAll("path").data(pie(params)).enter();
 
@@ -41,7 +47,8 @@ const update = (params) => {
     .attr("class", "arc")
     .attr("d", arc)
     .attr("stroke", "#fff")
-    .attr("stroke-width", 2);
+    .attr("stroke-width", 2)
+    .attr("fill", e => color(e.data.nama))
 };
 
 //   Data Firestore / Data Listener
