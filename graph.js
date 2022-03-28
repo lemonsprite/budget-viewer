@@ -37,6 +37,10 @@ const color = d3.scaleOrdinal(d3["schemeSet3"]);
 
 // Update Func
 const update = (params) => {
+  // Refaktor transisi
+  const t = d3.transition().duration(750)
+
+
   // Update Scale Warna
   color.domain(data.map((e) => e.nama));
 
@@ -44,7 +48,7 @@ const update = (params) => {
   const p = g.selectAll("path").data(pie(params));
 
   // Hapus path yang gak kepake
-  p.exit().remove();
+  p.exit().transition(t).attrTween("d", endTween).remove();
 
   // Update arc data path
   p.attr("d", arc);
@@ -56,8 +60,8 @@ const update = (params) => {
     .attr("stroke", "#fff")
     .attr("stroke-width", 2)
     .attr("fill", (e) => color(e.data.nama))
-    .transition().duration(750)
-      .attrTween("d", pieTween);
+    .transition(t)
+      .attrTween("d", startTween);
 };
 
 // Data Firestore / Data Listener
@@ -91,8 +95,17 @@ db.collection("budgets").onSnapshot((d) => {
 });
 
 //  Tween untuk pie Chart 
-const pieTween = (d) => {
+const startTween = (d) => {
   var i = d3.interpolate(d.endAngle, d.startAngle)
+  
+  return function(t) {
+    d.startAngle = i(t)
+    return arc(d)
+  }
+}
+
+const endTween = (d) => {
+  var i = d3.interpolate(d.startAngle, d.endAngle)
   
   return function(t) {
     d.startAngle = i(t)
