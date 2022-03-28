@@ -20,13 +20,13 @@ const g = svg
   .append("g")
   .attr("transform", `translate(${center.x}, ${center.y})`);
 
-//   Membuat angle data
+// Membuat angle data
 const pie = d3
   .pie()
   .sort(null)
   .value((d) => d.biaya);
 
-//   Mengenerate arc
+// Mengenerate arc
 const arc = d3
   .arc()
   .outerRadius(chartSet.radius)
@@ -53,16 +53,17 @@ const update = (params) => {
   p.enter()
     .append("path")
     .attr("class", "arc")
-    .attr("d", arc)
     .attr("stroke", "#fff")
     .attr("stroke-width", 2)
-    .attr("fill", (e) => color(e.data.nama));
+    .attr("fill", (e) => color(e.data.nama))
+    .transition().duration(750)
+      .attrTween("d", pieTween);
 };
 
-//   Data Firestore / Data Listener
+// Data Firestore / Data Listener
 var data = [];
 db.collection("budgets").onSnapshot((d) => {
-  //   console.log(d);
+  // console.log(d);
   d.docChanges().forEach((x) => {
     //   console.log(x.type);
     const doc = { ...x.doc.data(), id: x.doc.id };
@@ -85,6 +86,16 @@ db.collection("budgets").onSnapshot((d) => {
         break;
     }
   });
-  console.log(data);
+  // console.log(data);
   update(data);
 });
+
+//  Tween untuk pie Chart 
+const pieTween = (d) => {
+  var i = d3.interpolate(d.endAngle, d.startAngle)
+  
+  return function(t) {
+    d.startAngle = i(t)
+    return arc(d)
+  }
+}
