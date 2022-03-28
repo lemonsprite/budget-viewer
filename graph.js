@@ -45,7 +45,7 @@ const arc = d3
 // Update Func
 const update = (params) => {
   // Refaktor transisi
-  const t = d3.transition().duration(750);
+  const t = d3.transition('arcGrow').duration(750);
 
   // Update Scale Warna
   color.domain(data.map((e) => e.nama));
@@ -151,9 +151,9 @@ function editTween(d) {
 // Event handler
 const handleMouseOver = (e, d) => {
   // console.log(e, d)
-  d3.select(e.currentTarget).transition().duration(200).attr('fill', 'black')
+  d3.select(e.currentTarget).transition('changeColor').duration(200).attr('fill', 'black')
 }
 const handleMouseOut = (e, d) => {
   // console.log(d)
-  d3.select(e.currentTarget).transition().duration(200).attr('fill', color(d.data.nama))
+  d3.select(e.currentTarget).transition('changeColor').duration(200).attr('fill', color(d.data.nama))
 }
