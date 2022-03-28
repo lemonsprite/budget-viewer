@@ -38,8 +38,7 @@ const color = d3.scaleOrdinal(d3["schemeSet3"]);
 // Update Func
 const update = (params) => {
   // Refaktor transisi
-  const t = d3.transition().duration(750)
-
+  const t = d3.transition().duration(750);
 
   // Update Scale Warna
   color.domain(data.map((e) => e.nama));
@@ -51,7 +50,7 @@ const update = (params) => {
   p.exit().transition(t).attrTween("d", endTween).remove();
 
   // Update arc data path
-  p.attr("d", arc);
+  p.attr("d", arc).transition(t).attrTween("d", editTween);
 
   // Generate arc dari data
   p.enter()
@@ -60,8 +59,11 @@ const update = (params) => {
     .attr("stroke", "#fff")
     .attr("stroke-width", 2)
     .attr("fill", (e) => color(e.data.nama))
+    .each(function (x) {
+      this._current = x;
+    })
     .transition(t)
-      .attrTween("d", startTween);
+    .attrTween("d", startTween);
 };
 
 // Data Firestore / Data Listener
@@ -94,21 +96,41 @@ db.collection("budgets").onSnapshot((d) => {
   update(data);
 });
 
-//  Tween untuk pie Chart 
+//  Tween untuk pie Chart
 const startTween = (d) => {
-  var i = d3.interpolate(d.endAngle, d.startAngle)
-  
-  return function(t) {
-    d.startAngle = i(t)
-    return arc(d)
-  }
-}
+  var i = d3.interpolate(d.endAngle, d.startAngle);
+
+  return function (t) {
+    d.startAngle = i(t);
+    return arc(d);
+  };
+};
 
 const endTween = (d) => {
-  var i = d3.interpolate(d.startAngle, d.endAngle)
-  
-  return function(t) {
-    d.startAngle = i(t)
-    return arc(d)
-  }
+  var i = d3.interpolate(d.startAngle, d.endAngle);
+
+  return function (t) {
+    d.startAngle = i(t);
+    return arc(d);
+  };
+};
+
+/**
+ * Edit Tween
+ * 1. Membuat keyword fungsi untuk akses `this` pada selector
+ * ex : .each(function(x) { this._current = x})
+ * 
+ * 2. interpolate kedua objek
+ * 
+ * 3. Update _current props dengan data baru
+ */
+function editTween(d) {
+  var i = d3.interpolate(this._current, d);
+
+  this._current = i(d)
+
+  return function (t) {
+
+    return arc(i(t));
+  };
 }
