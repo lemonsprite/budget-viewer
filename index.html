@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Monitor</title>
+    <title>Budget Viewer</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 <style>
-    h2, p {
+    h2,
+    p {
         margin: 10px 0;
     }
+
     header {
         margin-bottom: 40px;
     }
@@ -21,7 +23,7 @@
 <body class="indigo">
 
     <header class="indigo darken-1 section">
-        <h2 class="center white-text">Budget Monitor</h2>
+        <h2 class="center white-text">Budget Viewer</h2>
         <p class="flow-text grey-text center text-lighten-2">Rincian Biaya Bulanan</p>
     </header>
 
@@ -53,6 +55,24 @@
             </div>
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore-compat.js"></script>
+    <script type="module">
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABR-DA0sLCtDY3NzF44Vty54IceL0CeQA",
+            authDomain: "udemy-d3-f2e59.firebaseapp.com",
+            projectId: "udemy-d3-f2e59",
+            storageBucket: "udemy-d3-f2e59.appspot.com",
+            messagingSenderId: "61014171469",
+            appId: "1:61014171469:web:7d15e31c9efd2374a2a104"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore()
+        const setup = { timestampsInSnapshots: true, merge: true }
+        db.settings(setup)
+    </script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="index.js"></script>
