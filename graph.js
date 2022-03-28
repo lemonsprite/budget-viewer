@@ -75,6 +75,9 @@ const update = (params) => {
     })
     .transition(t)
     .attrTween("d", startTween);
+
+
+  g.selectAll('path').on('mouseover', handleMouseOver).on('mouseout', handleMouseOut)
 };
 
 // Data Firestore / Data Listener
@@ -143,4 +146,14 @@ function editTween(d) {
   return function (t) {
     return arc(i(t));
   };
+}
+
+// Event handler
+const handleMouseOver = (e, d) => {
+  // console.log(e, d)
+  d3.select(e.currentTarget).transition().duration(200).attr('fill', 'black')
+}
+const handleMouseOut = (e, d) => {
+  // console.log(d)
+  d3.select(e.currentTarget).transition().duration(200).attr('fill', color(d.data.nama))
 }
