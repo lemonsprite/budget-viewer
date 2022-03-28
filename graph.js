@@ -41,14 +41,22 @@ const update = (params) => {
   color.domain(data.map((e) => e.nama));
 
   // Integrasi data ke chart
-  const p = g.selectAll("path").data(pie(params)).enter();
+  const p = g.selectAll("path").data(pie(params));
 
-  p.append("path")
+  // Hapus path yang gak kepake
+  p.exit().remove();
+
+  // Update arc data path
+  p.attr("d", arc);
+
+  // Generate arc dari data
+  p.enter()
+    .append("path")
     .attr("class", "arc")
     .attr("d", arc)
     .attr("stroke", "#fff")
     .attr("stroke-width", 2)
-    .attr("fill", e => color(e.data.nama))
+    .attr("fill", (e) => color(e.data.nama));
 };
 
 //   Data Firestore / Data Listener
