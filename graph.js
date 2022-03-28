@@ -42,6 +42,18 @@ const arc = d3
   .outerRadius(chartSet.radius)
   .innerRadius(chartSet.radius / 2);
 
+const tip = d3
+  .select("body")
+  .append("div")
+  .attr("class", "card")
+  .style("padding", "8px") // Add some padding so the tooltip content doesn't touch the border of the tooltip
+  .style("position", "absolute") // Absolutely position the tooltip to the body. Later we'll use transform to adjust the position of the tooltip
+  .style("background", "#333")
+  .style("color", "white")
+  .style("left", 0)
+  .style("top", 0)
+  .style("visibility", "hidden");
+
 // Update Func
 const update = (params) => {
   // Refaktor transisi
@@ -77,8 +89,21 @@ const update = (params) => {
     .attrTween("d", startTween);
 
   g.selectAll("path")
-    .on("mouseover", handleMouseOver)
-    .on("mouseout", handleMouseOut)
+    .on("mouseover", (e, d) => {
+      let content = `<div class="name">${d.data.nama}</div>`;
+      content += `<div class="biaya">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR'}).format(d.data.biaya)}</div>`;
+      content += `<div class="delete">Klik untuk menghapus data.</div>`;
+      tip.html(content).style("visibility", "visible");
+      handleMouseOver(e, d);
+    })
+    .on("mouseout", (e, d) => {
+      tip.style("visibility", "hidden");
+      handleMouseOut(e, d);
+    })
+    .on("mousemove", (e, d) => {
+      // We can calculate the mouse's position relative the whole page by using event.pageX and event.pageY.
+      tip.style("transform", `translate(${e.pageX + 20}px,${e.pageY}px)`);
+    })
     .on("click", handleClick);
 };
 
@@ -166,6 +191,6 @@ const handleMouseOut = (e, d) => {
     .attr("fill", color(d.data.nama));
 };
 const handleClick = (e, d) => {
-  const id = d.data.id
-  db.collection('budgets').doc(id).delete()
-}
+  const id = d.data.id;
+  db.collection("budgets").doc(id).delete();
+};
