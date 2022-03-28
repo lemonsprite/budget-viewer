@@ -1,20 +1,20 @@
-// setup
-const setup = {
+// chartSet
+const chartSet = {
   height: 300,
   width: 300,
   radius: 150,
 };
 
 const center = {
-  x: setup.width / 2 + 5,
-  y: setup.height / 2 + 5,
+  x: chartSet.width / 2 + 5,
+  y: chartSet.height / 2 + 5,
 };
 
 const svg = d3
   .select(".canvas")
   .append("svg")
-  .attr("width", setup.width + 150)
-  .attr("height", setup.height + 150);
+  .attr("width", chartSet.width + 150)
+  .attr("height", chartSet.height + 150);
 
 const g = svg
   .append("g")
@@ -29,23 +29,31 @@ const pie = d3
 //   Mengenerate arc
 const arc = d3
   .arc()
-  .outerRadius(setup.radius)
-  .innerRadius(setup.radius / 2);
+  .outerRadius(chartSet.radius)
+  .innerRadius(chartSet.radius / 2);
 
-
-//   Update Func 
+//   Update Func
 const update = (params) => {
-    // 
-}
+  // Integrasi data ke chart
+  const p = g.selectAll("path").data(pie(params)).enter();
+
+  p.append("path")
+    .attr("class", "arc")
+    .attr("d", arc)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2);
+};
 
 //   Data Firestore / Data Listener
-let data = []
+var data = [];
 db.collection("budgets").onSnapshot((d) => {
-
+  //   console.log(d);
   d.docChanges().forEach((x) => {
-    const doc = { ...d.doc.data(), id: d.doc.id };
+    //   console.log(x.type);
+    const doc = { ...x.doc.data(), id: x.doc.id };
+    // console.log(doc);
 
-    switch (d.type) {
+    switch (x.type) {
       case "added":
         data.push(doc);
         break;
@@ -62,5 +70,6 @@ db.collection("budgets").onSnapshot((d) => {
         break;
     }
   });
-  update(data)
+  console.log(data);
+  update(data);
 });
