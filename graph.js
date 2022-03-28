@@ -119,18 +119,17 @@ const endTween = (d) => {
  * Edit Tween
  * 1. Membuat keyword fungsi untuk akses `this` pada selector
  * ex : .each(function(x) { this._current = x})
- * 
+ *
  * 2. interpolate kedua objek
- * 
+ *
  * 3. Update _current props dengan data baru
  */
 function editTween(d) {
   var i = d3.interpolate(this._current, d);
 
-  this._current = i(d)
+  this._current = i(d);
 
   return function (t) {
-
     return arc(i(t));
   };
 }
