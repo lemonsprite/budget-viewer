@@ -10,7 +10,7 @@ form.addEventListener('submit', (e) => {
     
     if(nama.value && biaya.value) {
         let data = {
-            nama: nama.value,
+            nama: nama.value.toLowerCase(),
             biaya: parseInt(biaya.value)
         }
 

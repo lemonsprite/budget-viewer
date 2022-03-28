@@ -20,6 +20,16 @@ const g = svg
   .append("g")
   .attr("transform", `translate(${center.x}, ${center.y})`);
 
+// Scale Warna
+const color = d3.scaleOrdinal(d3["schemeSet3"]);
+
+// Legend setup
+const legendGroup = svg
+  .append("g")
+  .attr("transform", `translate(${chartSet.width + 40}, 10)`);
+
+const legend = d3.legendColor().shapePadding(10).shape("circle").scale(color);
+
 // Membuat angle data
 const pie = d3
   .pie()
@@ -32,9 +42,6 @@ const arc = d3
   .outerRadius(chartSet.radius)
   .innerRadius(chartSet.radius / 2);
 
-// Scale Warna
-const color = d3.scaleOrdinal(d3["schemeSet3"]);
-
 // Update Func
 const update = (params) => {
   // Refaktor transisi
@@ -42,6 +49,10 @@ const update = (params) => {
 
   // Update Scale Warna
   color.domain(data.map((e) => e.nama));
+
+  // Update dan panggil legend
+  legendGroup.call(legend);
+  legendGroup.selectAll("text").attr("fill", "white");
 
   // Integrasi data ke chart
   const p = g.selectAll("path").data(pie(params));
